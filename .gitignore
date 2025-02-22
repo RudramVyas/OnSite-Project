@@ -1,0 +1,17 @@
+# Ignore everything in the bin and obj directories
+Backend/OnSite.Backend/bin/
+Backend/OnSite.Backend/obj/
+
+# Ignore Visual Studio files
+*.user
+*.suo
+.vs/
+
+# Ignore Node modules and Angular build files
+Frontend/node_modules/
+Frontend/dist/
+
+# Ignore environment files (important for security)
+Frontend/.env
+Frontend/src/environments/environment.prod.ts
+Frontend/src/environments/environment.ts
