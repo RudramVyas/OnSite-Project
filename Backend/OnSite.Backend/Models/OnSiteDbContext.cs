@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace OnSite.Backend.Models
 {
@@ -11,5 +10,10 @@ namespace OnSite.Backend.Models
         }
 
         public DbSet<Event> Event { get; set; }
+        public DbSet<SubEvent> SubEvents { get; set; }
+        public DbSet<Supervisor> Supervisor { get; set; }
+        public DbSet<Laborer> Laborer { get; set; }
+        public DbSet<Assignment> Assignment { get; set; }
+        public DbSet<TimeSheet> TimeSheet { get; set; }
     }
 }
