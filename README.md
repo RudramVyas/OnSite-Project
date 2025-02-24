@@ -3,7 +3,7 @@
 ### 🔹 About the Project  
 This project demonstrates my **full-stack development skills** by integrating **Angular (Frontend), .NET Core (Backend), and MSSQL (Database)** to build a structured event management system. The system efficiently handles **quotes, events, sub-events, supervisors, laborers, and timesheets**.
 
-I developed this project within **two days** to reinforce my ability to **quickly architect and implement scalable solutions** using modern web technologies.
+I developed this project to reinforce my ability to **quickly architect and implement scalable solutions** using modern web technologies.
 
 ---
 
