@@ -81,14 +81,6 @@ ng serve --open  # Runs the app on http://localhost:4200
 
 ---
 
-### 🔥 Why This Project?  
-After an **interview one week ago**, I wanted to **demonstrate my expertise** in **Angular, .NET, and MSSQL** with a complete **end-to-end** solution. This project is built **within 2 days** to showcase:  
-- **Quick development & problem-solving skills**  
-- **Strong understanding of full-stack architecture**  
-- **Ability to deliver real-world projects under time constraints**  
-
----
-
 ### 📩 Final Follow-up  
 This project reflects my **dedication, technical proficiency, and ability to execute efficiently**. Looking forward to the opportunity to discuss this further.  
 
