@@ -9,7 +9,7 @@ I developed this project to reinforce my ability to **quickly architect and impl
 
 ### 🛠️ Tech Stack  
 - **Frontend:** Angular, TypeScript  
-- **Backend:** .NET Core 7 (Web API), Entity Framework Core  
+- **Backend:** .NET (Web API), Entity Framework Core  
 - **Database:** MSSQL (SQL Server)  
 - **Version Control:** Git, GitHub  
 
