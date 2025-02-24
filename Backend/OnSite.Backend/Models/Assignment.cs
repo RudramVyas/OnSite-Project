@@ -1,5 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.Text.Json.Serialization;
 
 namespace OnSite.Backend.Models
 {
@@ -8,34 +11,38 @@ namespace OnSite.Backend.Models
         [Key]
         public int AssignmentId { get; set; }
 
-        // This assignment must be linked to an Event
-        [ForeignKey("Event")]
-        public int EventId { get; set; }
-
-        // Optional: May link to a SubEvent (for L1 assignments)
-        [ForeignKey("SubEvent")]
+        // Only the foreign key IDs are used for input
+        public int? EventId { get; set; }
         public int? SubEventId { get; set; }
-
-        // Optional: For supervisor assignment
-        [ForeignKey("Supervisor")]
         public int? SupervisorId { get; set; }
-
-        // Optional: For laborer assignment
-        [ForeignKey("Laborer")]
         public int? LaborerId { get; set; }
 
-        // Role description: e.g., "L2 Supervisor", "L1 Supervisor", "Laborer"
         [Required]
-        [MaxLength(20)]
         public string AssignedRole { get; set; }
 
-        // Navigation properties
-        public Event Event { get; set; }
-        public SubEvent SubEvent { get; set; }
-        public Supervisor Supervisor { get; set; }
-        public Laborer Laborer { get; set; }
+        // Navigation properties (ignored during JSON input and validation)
+        [JsonIgnore]
+        [ValidateNever]
+        [ForeignKey("EventId")]
+        public virtual Event Event { get; set; }
 
-        // Optional: Navigation property for timesheets associated with this assignment
-        public ICollection<TimeSheet> TimeSheets { get; set; }
+        [JsonIgnore]
+        [ValidateNever]
+        [ForeignKey("SubEventId")]
+        public virtual SubEvent SubEvent { get; set; }
+
+        [JsonIgnore]
+        [ValidateNever]
+        [ForeignKey("SupervisorId")]
+        public virtual Supervisor Supervisor { get; set; }
+
+        [JsonIgnore]
+        [ValidateNever]
+        [ForeignKey("LaborerId")]
+        public virtual Laborer Laborer { get; set; }
+
+        [JsonIgnore]
+        [ValidateNever]
+        public virtual ICollection<TimeSheet> TimeSheets { get; set; } = new List<TimeSheet>();
     }
 }

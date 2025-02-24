@@ -18,71 +18,62 @@ namespace OnSite.Backend.Controllers
         }
 
         // GET: api/Event
-        // Calls sp_GetAllEvents to retrieve all events.
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Event>>> GetEvents()
         {
-            var events = await _context.Event
-                .FromSqlRaw("EXEC sp_GetAllEvents")
-                .ToListAsync();
-            return Ok(events);
+            return await _context.Event.ToListAsync();
         }
 
         // GET: api/Event/5
-        // Calls sp_GetEventById to retrieve a single event by ID.
         [HttpGet("{id}")]
         public async Task<ActionResult<Event>> GetEvent(int id)
         {
-            var evt = await _context.Event
-                .FromSqlInterpolated($"EXEC sp_GetEventById @EventId={id}")
-                .FirstOrDefaultAsync();
+            var evt = await _context.Event.FindAsync(id);
             if (evt == null)
                 return NotFound();
             return evt;
         }
 
         // POST: api/Event
-        // Calls sp_CreateEvent to create a new event.
         [HttpPost]
         public async Task<ActionResult<Event>> CreateEvent(Event evt)
         {
-            // The stored procedure should insert a new event and return the new ID.
-            var result = await _context.Event
-                .FromSqlInterpolated($"EXEC sp_CreateEvent @Name={evt.Name}, @EventDate={evt.EventDate}, @Location={evt.Location}, @QuoteDetails={evt.QuoteDetails}")
-                .ToListAsync();
-
-            if (result.Count > 0)
-            {
-                int newId = result[0].EventId;
-                return CreatedAtAction(nameof(GetEvent), new { id = newId }, result[0]);
-            }
-            else
-            {
-                return BadRequest("Unable to create event.");
-            }
+            _context.Event.Add(evt);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetEvent), new { id = evt.EventId }, evt);
         }
 
         // PUT: api/Event/5
-        // Calls sp_UpdateEvent to update an existing event.
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateEvent(int id, Event evt)
         {
             if (id != evt.EventId)
                 return BadRequest();
 
-            int affected = await _context.Database.ExecuteSqlInterpolatedAsync(
-                $"EXEC sp_UpdateEvent @EventId={id}, @Name={evt.Name}, @EventDate={evt.EventDate}, @Location={evt.Location}, @QuoteDetails={evt.QuoteDetails}");
-
+            _context.Entry(evt).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _context.Event.AnyAsync(e => e.EventId == id))
+                    return NotFound();
+                throw;
+            }
             return NoContent();
         }
 
         // DELETE: api/Event/5
-        // Calls sp_DeleteEvent to delete an event.
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEvent(int id)
         {
-            int affected = await _context.Database.ExecuteSqlInterpolatedAsync(
-                $"EXEC sp_DeleteEvent @EventId={id}");
+            var evt = await _context.Event.FindAsync(id);
+            if (evt == null)
+                return NotFound();
+
+            _context.Event.Remove(evt);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
     }

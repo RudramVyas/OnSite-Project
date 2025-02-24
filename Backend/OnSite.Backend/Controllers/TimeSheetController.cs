@@ -11,7 +11,6 @@ namespace OnSite.Backend.Controllers
     public class TimeSheetController : ControllerBase
     {
         private readonly OnSiteDbContext _context;
-
         public TimeSheetController(OnSiteDbContext context)
         {
             _context = context;
@@ -21,52 +20,45 @@ namespace OnSite.Backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TimeSheet>>> GetTimeSheets()
         {
-            var timesheets = await _context.TimeSheet
-                .FromSqlRaw("EXEC sp_GetAllTimeSheets")
-                .ToListAsync();
-            return Ok(timesheets);
+            return await _context.TimeSheet.ToListAsync();
         }
 
         // GET: api/TimeSheet/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TimeSheet>> GetTimeSheet(int id)
         {
-            var timesheet = await _context.TimeSheet
-                .FromSqlInterpolated($"EXEC sp_GetTimeSheetById @TimeSheetId={id}")
-                .FirstOrDefaultAsync();
-            if (timesheet == null)
+            var timeSheet = await _context.TimeSheet.FindAsync(id);
+            if (timeSheet == null)
                 return NotFound();
-            return timesheet;
+            return timeSheet;
         }
 
         // POST: api/TimeSheet
         [HttpPost]
-        public async Task<ActionResult<TimeSheet>> CreateTimeSheet(TimeSheet timesheet)
+        public async Task<ActionResult<TimeSheet>> CreateTimeSheet([FromBody] TimeSheet timeSheet)
         {
-            var result = await _context.TimeSheet
-                .FromSqlInterpolated($"EXEC sp_CreateTimeSheet @AssignmentId={timesheet.AssignmentId}, @HoursWorked={timesheet.HoursWorked}, @WorkDate={timesheet.WorkDate}")
-                .ToListAsync();
-
-            if (result.Count > 0)
-            {
-                int newId = result[0].TimeSheetId;
-                return CreatedAtAction(nameof(GetTimeSheet), new { id = newId }, result[0]);
-            }
-            else
-            {
-                return BadRequest("Unable to create timesheet.");
-            }
+            _context.TimeSheet.Add(timeSheet);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetTimeSheet), new { id = timeSheet.TimeSheetId }, timeSheet);
         }
 
         // PUT: api/TimeSheet/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTimeSheet(int id, TimeSheet timesheet)
+        public async Task<IActionResult> UpdateTimeSheet(int id, TimeSheet timeSheet)
         {
-            if (id != timesheet.TimeSheetId)
+            if (id != timeSheet.TimeSheetId)
                 return BadRequest();
-
-            int affected = await _context.Database.ExecuteSqlInterpolatedAsync(
-                $"EXEC sp_UpdateTimeSheet @TimeSheetId={id}, @AssignmentId={timesheet.AssignmentId}, @HoursWorked={timesheet.HoursWorked}, @WorkDate={timesheet.WorkDate}");
+            _context.Entry(timeSheet).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _context.TimeSheet.AnyAsync(t => t.TimeSheetId == id))
+                    return NotFound();
+                throw;
+            }
             return NoContent();
         }
 
@@ -74,8 +66,11 @@ namespace OnSite.Backend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTimeSheet(int id)
         {
-            int affected = await _context.Database.ExecuteSqlInterpolatedAsync(
-                $"EXEC sp_DeleteTimeSheet @TimeSheetId={id}");
+            var timeSheet = await _context.TimeSheet.FindAsync(id);
+            if (timeSheet == null)
+                return NotFound();
+            _context.TimeSheet.Remove(timeSheet);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
     }

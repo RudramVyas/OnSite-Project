@@ -1,0 +1,42 @@
+<div class="events-container">
+  <h2>Manage Events</h2>
+
+  <!-- Display error message if any -->
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+  <!-- List of events -->
+  <ul class="event-list">
+    <li *ngFor="let evt of events">
+      <div class="event-info">
+        <strong>{{ evt.name }} (ID: {{evt.eventId}})</strong>
+        <span>{{ evt.eventDate | date:'mediumDate' }}</span>
+        <span>{{ evt.location }}</span>
+      </div>
+      <button (click)="deleteEvent(evt.eventId)">Delete</button>
+    </li>
+  </ul>
+
+  <!-- Form to add a new event -->
+  <div class="event-form">
+    <h3>Add New Event</h3>
+    <form (ngSubmit)="createEvent()">
+      <div class="form-group">
+        <label for="name">Event Name:</label>
+        <input id="name" type="text" [(ngModel)]="newEvent.name" name="name" required />
+      </div>
+      <div class="form-group">
+        <label for="eventDate">Event Date:</label>
+        <input id="eventDate" type="date" [(ngModel)]="newEvent.eventDate" name="eventDate" required />
+      </div>
+      <div class="form-group">
+        <label for="location">Location:</label>
+        <input id="location" type="text" [(ngModel)]="newEvent.location" name="location" />
+      </div>
+      <div class="form-group">
+        <label for="quoteDetails">Quote Details:</label>
+        <textarea id="quoteDetails" rows="3" [(ngModel)]="newEvent.quoteDetails" name="quoteDetails"></textarea>
+      </div>
+      <button type="submit">Save Event</button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,27 @@
+<div class="page-container">
+  <h2>Assign Laborer (L1 Supervisor)</h2>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+
+  <div class="form-group">
+    <label for="subEventSelect">Select Sub-Event</label>
+    <select id="subEventSelect" [(ngModel)]="selectedSubEventId" name="subEventSelect" required>
+      <option [ngValue]="null">-- Select Sub-Event --</option>
+      <option *ngFor="let subEvt of subEvents" [ngValue]="subEvt.subEventId">
+        {{ subEvt.name }} (Event ID: {{ subEvt.eventId }})
+      </option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="laborerSelect">Select Laborer</label>
+    <select id="laborerSelect" [(ngModel)]="selectedLaborerId" name="laborerSelect" required>
+      <option [ngValue]="null">-- Select Laborer --</option>
+      <option *ngFor="let lab of laborers" [ngValue]="lab.laborerId">
+        {{ lab.name }}
+      </option>
+    </select>
+  </div>
+
+  <button (click)="assignLaborer()">Assign Laborer</button>
+</div>

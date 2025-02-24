@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace OnSite.Backend.Models
 {
@@ -8,16 +9,17 @@ namespace OnSite.Backend.Models
         [Key]
         public int SubEventId { get; set; }
 
-        // Foreign key linking back to the main event
-        [ForeignKey("Event")]
+        [Required]
         public int EventId { get; set; }
+
+        // Remove any [Required] attribute from the navigation property
+        [JsonIgnore]
+        [ValidateNever] // Tells the model binder to skip validation for this property
+        public virtual Event Event { get; set; }
 
         [Required]
         public string Name { get; set; }
 
         public string Description { get; set; }
-
-        // Navigation property
-        public Event Event { get; set; }
     }
 }

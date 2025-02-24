@@ -1,0 +1,27 @@
+<div class="page-container">
+  <h2>Assign L2 Supervisor to Event</h2>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+
+  <div class="form-group">
+    <label for="eventSelect">Select Event</label>
+    <select id="eventSelect" [(ngModel)]="selectedEventId" name="eventSelect" required>
+      <option [ngValue]="null">-- Select Event --</option>
+      <option *ngFor="let evt of events" [ngValue]="evt.eventId">
+        {{ evt.name }} ({{ evt.eventDate | date:'mediumDate' }})
+      </option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="supervisorSelect">Select L2 Supervisor</label>
+    <select id="supervisorSelect" [(ngModel)]="selectedSupervisorId" name="supervisorSelect" required>
+      <option [ngValue]="null">-- Select Supervisor --</option>
+      <option *ngFor="let sup of supervisorsL2" [ngValue]="sup.supervisorId">
+        {{ sup.name }}
+      </option>
+    </select>
+  </div>
+
+  <button (click)="assignSupervisor()">Assign Supervisor</button>
+</div>

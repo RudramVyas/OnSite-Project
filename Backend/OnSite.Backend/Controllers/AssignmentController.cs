@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using OnSite.Backend.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace OnSite.Backend.Controllers
@@ -11,7 +12,6 @@ namespace OnSite.Backend.Controllers
     public class AssignmentController : ControllerBase
     {
         private readonly OnSiteDbContext _context;
-
         public AssignmentController(OnSiteDbContext context)
         {
             _context = context;
@@ -21,19 +21,14 @@ namespace OnSite.Backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Assignment>>> GetAssignments()
         {
-            var assignments = await _context.Assignment
-                .FromSqlRaw("EXEC sp_GetAllAssignments")
-                .ToListAsync();
-            return Ok(assignments);
+            return await _context.Assignment.ToListAsync();
         }
 
         // GET: api/Assignment/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Assignment>> GetAssignment(int id)
         {
-            var assignment = await _context.Assignment
-                .FromSqlInterpolated($"EXEC sp_GetAssignmentById @AssignmentId={id}")
-                .FirstOrDefaultAsync();
+            var assignment = await _context.Assignment.FindAsync(id);
             if (assignment == null)
                 return NotFound();
             return assignment;
@@ -41,21 +36,38 @@ namespace OnSite.Backend.Controllers
 
         // POST: api/Assignment
         [HttpPost]
-        public async Task<ActionResult<Assignment>> CreateAssignment(Assignment assignment)
+        public async Task<ActionResult<Assignment>> CreateAssignment([FromBody] Assignment assignment)
         {
-            var result = await _context.Assignment
-                .FromSqlInterpolated($"EXEC sp_CreateAssignment @EventId={assignment.EventId}, @SubEventId={assignment.SubEventId}, @SupervisorId={assignment.SupervisorId}, @LaborerId={assignment.LaborerId}, @AssignedRole={assignment.AssignedRole}")
-                .ToListAsync();
+            // Business rules:
+            if (assignment.AssignedRole == "L2 Supervisor")
+            {
+                // L2 must be assigned to an event (SubEventId must be null)
+                if (assignment.SubEventId != null)
+                    return BadRequest("For L2 Supervisor assignments, SubEventId must be null.");
+            }
+            else if (assignment.AssignedRole == "L1 Supervisor")
+            {
+                // L1 must be assigned to a sub-event (SubEventId required)
+                if (assignment.SubEventId == null || assignment.SubEventId <= 0)
+                    return BadRequest("For L1 Supervisor assignments, SubEventId is required.");
+            }
+            else if (assignment.AssignedRole == "Laborer")
+            {
+                // Laborer assignment must verify availability
+                var laborer = await _context.Laborer.FindAsync(assignment.LaborerId);
+                if (laborer == null)
+                    return BadRequest("Invalid LaborerId.");
+                if (!laborer.IsAvailable)
+                    return BadRequest("Laborer is not available.");
 
-            if (result.Count > 0)
-            {
-                int newId = result[0].AssignmentId;
-                return CreatedAtAction(nameof(GetAssignment), new { id = newId }, result[0]);
+                // Mark laborer as unavailable
+                laborer.IsAvailable = false;
+                _context.Entry(laborer).State = EntityState.Modified;
             }
-            else
-            {
-                return BadRequest("Unable to create assignment.");
-            }
+
+            _context.Assignment.Add(assignment);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetAssignment), new { id = assignment.AssignmentId }, assignment);
         }
 
         // PUT: api/Assignment/5
@@ -65,8 +77,17 @@ namespace OnSite.Backend.Controllers
             if (id != assignment.AssignmentId)
                 return BadRequest();
 
-            int affected = await _context.Database.ExecuteSqlInterpolatedAsync(
-                $"EXEC sp_UpdateAssignment @AssignmentId={id}, @EventId={assignment.EventId}, @SubEventId={assignment.SubEventId}, @SupervisorId={assignment.SupervisorId}, @LaborerId={assignment.LaborerId}, @AssignedRole={assignment.AssignedRole}");
+            _context.Entry(assignment).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _context.Assignment.AnyAsync(a => a.AssignmentId == id))
+                    return NotFound();
+                throw;
+            }
             return NoContent();
         }
 
@@ -74,8 +95,11 @@ namespace OnSite.Backend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAssignment(int id)
         {
-            int affected = await _context.Database.ExecuteSqlInterpolatedAsync(
-                $"EXEC sp_DeleteAssignment @AssignmentId={id}");
+            var assignment = await _context.Assignment.FindAsync(id);
+            if (assignment == null)
+                return NotFound();
+            _context.Assignment.Remove(assignment);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
     }

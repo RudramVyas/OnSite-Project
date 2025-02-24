@@ -1,0 +1,31 @@
+<div class="page-container">
+    <h2>L2 Timesheets</h2>
+    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+    
+    <ul class="list">
+      <li *ngFor="let ts of timeSheets">
+        <span>Assignment ID: {{ ts.assignmentId }}, Hours: {{ ts.hoursWorked }}, Date: {{ ts.workDate | date:'mediumDate' }}</span>
+        <button (click)="deleteTimeSheet(ts.timeSheetId)">Delete</button>
+      </li>
+    </ul>
+    
+    <div class="form-section">
+      <h3>Add Timesheet</h3>
+      <form (ngSubmit)="createTimeSheet()">
+        <div class="form-group">
+          <label for="assignmentId">Assignment ID:</label>
+          <input id="assignmentId" type="number" [(ngModel)]="newTimeSheet.assignmentId" name="assignmentId" required />
+        </div>
+        <div class="form-group">
+          <label for="hoursWorked">Hours Worked:</label>
+          <input id="hoursWorked" type="number" [(ngModel)]="newTimeSheet.hoursWorked" name="hoursWorked" required />
+        </div>
+        <div class="form-group">
+          <label for="workDate">Work Date:</label>
+          <input id="workDate" type="date" [(ngModel)]="newTimeSheet.workDate" name="workDate" required />
+        </div>
+        <button type="submit">Add Timesheet</button>
+      </form>
+    </div>
+  </div>
+  

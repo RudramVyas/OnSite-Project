@@ -1,0 +1,14 @@
+<div class="page-container">
+  <h2>All Timesheets</h2>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  
+  <ul class="list">
+    <li *ngFor="let ts of timeSheets">
+      <span>
+        Assignment ID: {{ ts.assignmentId }},
+        Hours Worked: {{ ts.hoursWorked }},
+        Date: {{ ts.workDate | date:'mediumDate' }}
+      </span>
+    </li>
+  </ul>
+</div>

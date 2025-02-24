@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace OnSite.Backend.Models
 {
@@ -8,12 +10,13 @@ namespace OnSite.Backend.Models
         public int LaborerId { get; set; }
 
         [Required]
-        [MaxLength(100)]
         public string Name { get; set; }
 
+        // Indicates if the laborer is available for assignment.
         public bool IsAvailable { get; set; } = true;
 
-        // Optional: Navigation property for assignments
-        public ICollection<Assignment> Assignments { get; set; }
+        // Optionally include assignments; mark with [JsonIgnore] to avoid cycles.
+        [JsonIgnore]
+        public virtual ICollection<Assignment> Assignments { get; set; } = new List<Assignment>();
     }
 }

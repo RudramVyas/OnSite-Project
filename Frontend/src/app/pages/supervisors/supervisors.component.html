@@ -1,0 +1,29 @@
+<div class="page-container">
+  <h2>Supervisors</h2>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  
+  <ul class="list">
+    <li *ngFor="let sup of supervisors">
+      <span>{{ sup.name }} - Level {{ sup.level }}</span>
+      <button (click)="deleteSupervisor(sup.supervisorId)">Delete</button>
+    </li>
+  </ul>
+
+  <div class="form-section">
+    <h3>Add New Supervisor</h3>
+    <form (ngSubmit)="createSupervisor()">
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input id="name" type="text" [(ngModel)]="newSupervisor.name" name="name" required />
+      </div>
+      <div class="form-group">
+        <label for="level">Level:</label>
+        <select id="level" [(ngModel)]="newSupervisor.level" name="level" required>
+          <option [value]="2">L2 Supervisor</option>
+          <option [value]="1">L1 Supervisor</option>
+        </select>
+      </div>
+      <button type="submit">Add Supervisor</button>
+    </form>
+  </div>
+</div>

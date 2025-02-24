@@ -18,68 +18,66 @@ namespace OnSite.Backend.Controllers
         }
 
         // GET: api/SubEvent
-        // Calls sp_GetAllSubEvents to retrieve all sub-events.
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SubEvent>>> GetSubEvents()
         {
-            var subEvents = await _context.SubEvents
-                .FromSqlRaw("EXEC sp_GetAllSubEvents")
-                .ToListAsync();
-            return Ok(subEvents);
+            return await _context.SubEvents.ToListAsync();
         }
 
         // GET: api/SubEvent/5
-        // Calls sp_GetSubEventById to retrieve a single sub-event.
         [HttpGet("{id}")]
         public async Task<ActionResult<SubEvent>> GetSubEvent(int id)
         {
-            var subEvt = await _context.SubEvents
-                .FromSqlInterpolated($"EXEC sp_GetSubEventById @SubEventId={id}")
-                .FirstOrDefaultAsync();
-            if (subEvt == null)
+            var subEvent = await _context.SubEvents.FindAsync(id);
+            if (subEvent == null)
                 return NotFound();
-            return subEvt;
+            return subEvent;
         }
 
         // POST: api/SubEvent
-        // Calls sp_CreateSubEvent to insert a new sub-event.
         [HttpPost]
-        public async Task<ActionResult<SubEvent>> CreateSubEvent(SubEvent subEvt)
+        public async Task<ActionResult<SubEvent>> CreateSubEvent(SubEvent subEvent)
         {
-            var result = await _context.SubEvents
-                .FromSqlInterpolated($"EXEC sp_CreateSubEvent @EventId={subEvt.EventId}, @Name={subEvt.Name}, @Description={subEvt.Description}")
-                .ToListAsync();
-            if (result.Count > 0)
-            {
-                int newId = result[0].SubEventId;
-                return CreatedAtAction(nameof(GetSubEvent), new { id = newId }, result[0]);
-            }
-            else
-            {
-                return BadRequest("Unable to create sub-event.");
-            }
+            // Business rule: SubEvent must have a valid EventId.
+            if (subEvent.EventId <= 0)
+                return BadRequest("SubEvent must be associated with a valid Event.");
+
+            _context.SubEvents.Add(subEvent);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetSubEvent), new { id = subEvent.SubEventId }, subEvent);
         }
 
         // PUT: api/SubEvent/5
-        // Calls sp_UpdateSubEvent to update an existing sub-event.
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateSubEvent(int id, SubEvent subEvt)
+        public async Task<IActionResult> UpdateSubEvent(int id, SubEvent subEvent)
         {
-            if (id != subEvt.SubEventId)
+            if (id != subEvent.SubEventId)
                 return BadRequest();
 
-            int affected = await _context.Database.ExecuteSqlInterpolatedAsync(
-                $"EXEC sp_UpdateSubEvent @SubEventId={id}, @EventId={subEvt.EventId}, @Name={subEvt.Name}, @Description={subEvt.Description}");
+            _context.Entry(subEvent).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _context.SubEvents.AnyAsync(e => e.SubEventId == id))
+                    return NotFound();
+                throw;
+            }
             return NoContent();
         }
 
         // DELETE: api/SubEvent/5
-        // Calls sp_DeleteSubEvent to remove a sub-event.
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSubEvent(int id)
         {
-            int affected = await _context.Database.ExecuteSqlInterpolatedAsync(
-                $"EXEC sp_DeleteSubEvent @SubEventId={id}");
+            var subEvent = await _context.SubEvents.FindAsync(id);
+            if (subEvent == null)
+                return NotFound();
+
+            _context.SubEvents.Remove(subEvent);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
     }

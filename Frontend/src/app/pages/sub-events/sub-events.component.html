@@ -1,0 +1,30 @@
+<div class="page-container">
+  <h2>Manage Sub-Events</h2>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+  <ul class="list">
+    <li *ngFor="let subEvt of subEvents">
+      <span>{{ subEvt.name }} (Event ID: {{ subEvt.eventId }})</span>
+      <button (click)="deleteSubEvent(subEvt.subEventId)">Delete</button>
+    </li>
+  </ul>
+
+  <div class="form-section">
+    <h3>Add New Sub-Event</h3>
+    <form (ngSubmit)="createSubEvent()">
+      <div class="form-group">
+        <label for="eventId">Event ID:</label>
+        <input id="eventId" type="number" [(ngModel)]="newSubEvent.eventId" name="eventId" required />
+      </div>
+      <div class="form-group">
+        <label for="name">Sub-Event Name:</label>
+        <input id="name" type="text" [(ngModel)]="newSubEvent.name" name="name" required />
+      </div>
+      <div class="form-group">
+        <label for="description">Description:</label>
+        <textarea id="description" rows="2" [(ngModel)]="newSubEvent.description" name="description"></textarea>
+      </div>
+      <button type="submit">Add Sub-Event</button>
+    </form>
+  </div>
+</div>

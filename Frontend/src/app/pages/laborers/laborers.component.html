@@ -1,0 +1,22 @@
+<div class="page-container">
+  <h2>Manage Laborers</h2>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  
+  <ul class="list">
+    <li *ngFor="let lab of laborers">
+      <span>{{ lab.name }} - <em>{{ lab.isAvailable ? 'Available' : 'Unavailable' }}</em></span>
+      <button (click)="deleteLaborer(lab.laborerId)">Delete</button>
+    </li>
+  </ul>
+
+  <div class="form-section">
+    <h3>Add New Laborer</h3>
+    <form (ngSubmit)="createLaborer()">
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input id="name" type="text" [(ngModel)]="newLaborer.name" name="name" required />
+      </div>
+      <button type="submit">Add Laborer</button>
+    </form>
+  </div>
+</div>

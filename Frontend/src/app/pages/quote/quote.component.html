@@ -1,0 +1,26 @@
+<div class="page-container">
+  <h2>Quote Calculator</h2>
+  <form (ngSubmit)="calculateQuote()" class="form-section">
+    <div class="form-group">
+      <label for="numAttendees">Expected Attendees</label>
+      <input id="numAttendees" type="number" [(ngModel)]="numAttendees" name="numAttendees" required />
+    </div>
+    <div class="form-group">
+      <label for="boothCount">Number of Booths</label>
+      <input id="boothCount" type="number" [(ngModel)]="boothCount" name="boothCount" required />
+    </div>
+    <div class="form-group">
+      <label for="hours">Hours Required</label>
+      <input id="hours" type="number" [(ngModel)]="hours" name="hours" required />
+    </div>
+    <div class="form-group">
+      <label for="baseRate">Base Rate ($)</label>
+      <input id="baseRate" type="number" [(ngModel)]="baseRate" name="baseRate" required />
+    </div>
+    <button type="submit">Calculate Quote</button>
+  </form>
+
+  <div *ngIf="calculatedQuote !== null" class="result">
+    <h3>Estimated Quote: {{ calculatedQuote | currency }}</h3>
+  </div>
+</div>

@@ -21,19 +21,14 @@ namespace OnSite.Backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Supervisor>>> GetSupervisors()
         {
-            var supervisors = await _context.Supervisor
-                .FromSqlRaw("EXEC sp_GetAllSupervisors")
-                .ToListAsync();
-            return Ok(supervisors);
+            return await _context.Supervisor.ToListAsync();
         }
 
         // GET: api/Supervisor/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Supervisor>> GetSupervisor(int id)
         {
-            var supervisor = await _context.Supervisor
-                .FromSqlInterpolated($"EXEC sp_GetSupervisorById @SupervisorId={id}")
-                .FirstOrDefaultAsync();
+            var supervisor = await _context.Supervisor.FindAsync(id);
             if (supervisor == null)
                 return NotFound();
             return supervisor;
@@ -41,21 +36,12 @@ namespace OnSite.Backend.Controllers
 
         // POST: api/Supervisor
         [HttpPost]
-        public async Task<ActionResult<Supervisor>> CreateSupervisor(Supervisor supervisor)
+        public async Task<ActionResult<Supervisor>> CreateSupervisor([FromBody] Supervisor supervisor)
         {
-            var result = await _context.Supervisor
-                .FromSqlInterpolated($"EXEC sp_CreateSupervisor @Name={supervisor.Name}, @Level={supervisor.Level}")
-                .ToListAsync();
-
-            if (result.Count > 0)
-            {
-                int newId = result[0].SupervisorId;
-                return CreatedAtAction(nameof(GetSupervisor), new { id = newId }, result[0]);
-            }
-            else
-            {
-                return BadRequest("Unable to create supervisor.");
-            }
+            // Allow creation without assignments.
+            _context.Supervisor.Add(supervisor);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetSupervisor), new { id = supervisor.SupervisorId }, supervisor);
         }
 
         // PUT: api/Supervisor/5
@@ -65,8 +51,17 @@ namespace OnSite.Backend.Controllers
             if (id != supervisor.SupervisorId)
                 return BadRequest();
 
-            int affected = await _context.Database.ExecuteSqlInterpolatedAsync(
-                $"EXEC sp_UpdateSupervisor @SupervisorId={id}, @Name={supervisor.Name}, @Level={supervisor.Level}");
+            _context.Entry(supervisor).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _context.Supervisor.AnyAsync(s => s.SupervisorId == id))
+                    return NotFound();
+                throw;
+            }
             return NoContent();
         }
 
@@ -74,8 +69,12 @@ namespace OnSite.Backend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSupervisor(int id)
         {
-            int affected = await _context.Database.ExecuteSqlInterpolatedAsync(
-                $"EXEC sp_DeleteSupervisor @SupervisorId={id}");
+            var supervisor = await _context.Supervisor.FindAsync(id);
+            if (supervisor == null)
+                return NotFound();
+
+            _context.Supervisor.Remove(supervisor);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
     }

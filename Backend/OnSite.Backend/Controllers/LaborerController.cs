@@ -21,19 +21,14 @@ namespace OnSite.Backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Laborer>>> GetLaborers()
         {
-            var laborers = await _context.Laborer
-                .FromSqlRaw("EXEC sp_GetAllLaborers")
-                .ToListAsync();
-            return Ok(laborers);
+            return await _context.Laborer.ToListAsync();
         }
 
         // GET: api/Laborer/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Laborer>> GetLaborer(int id)
         {
-            var laborer = await _context.Laborer
-                .FromSqlInterpolated($"EXEC sp_GetLaborerById @LaborerId={id}")
-                .FirstOrDefaultAsync();
+            var laborer = await _context.Laborer.FindAsync(id);
             if (laborer == null)
                 return NotFound();
             return laborer;
@@ -41,21 +36,11 @@ namespace OnSite.Backend.Controllers
 
         // POST: api/Laborer
         [HttpPost]
-        public async Task<ActionResult<Laborer>> CreateLaborer(Laborer laborer)
+        public async Task<ActionResult<Laborer>> CreateLaborer([FromBody] Laborer laborer)
         {
-            var result = await _context.Laborer
-                .FromSqlInterpolated($"EXEC sp_CreateLaborer @Name={laborer.Name}, @IsAvailable={laborer.IsAvailable}")
-                .ToListAsync();
-
-            if (result.Count > 0)
-            {
-                int newId = result[0].LaborerId;
-                return CreatedAtAction(nameof(GetLaborer), new { id = newId }, result[0]);
-            }
-            else
-            {
-                return BadRequest("Unable to create laborer.");
-            }
+            _context.Laborer.Add(laborer);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetLaborer), new { id = laborer.LaborerId }, laborer);
         }
 
         // PUT: api/Laborer/5
@@ -65,8 +50,17 @@ namespace OnSite.Backend.Controllers
             if (id != laborer.LaborerId)
                 return BadRequest();
 
-            int affected = await _context.Database.ExecuteSqlInterpolatedAsync(
-                $"EXEC sp_UpdateLaborer @LaborerId={id}, @Name={laborer.Name}, @IsAvailable={laborer.IsAvailable}");
+            _context.Entry(laborer).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _context.Laborer.AnyAsync(l => l.LaborerId == id))
+                    return NotFound();
+                throw;
+            }
             return NoContent();
         }
 
@@ -74,8 +68,12 @@ namespace OnSite.Backend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLaborer(int id)
         {
-            int affected = await _context.Database.ExecuteSqlInterpolatedAsync(
-                $"EXEC sp_DeleteLaborer @LaborerId={id}");
+            var laborer = await _context.Laborer.FindAsync(id);
+            if (laborer == null)
+                return NotFound();
+
+            _context.Laborer.Remove(laborer);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
     }
