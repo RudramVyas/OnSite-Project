@@ -1,14 +1,14 @@
 ## 🚀 OnSite Management System  
 
 ### 🔹 About the Project  
-This project demonstrates my **full-stack development skills** by integrating **Angular (Frontend), .NET Core (Backend), and MSSQL (Database)** to build a structured event management system. The system efficiently handles **events, sub-events, supervisors, laborers, and timesheets** while ensuring proper role-based assignments.
+This project demonstrates my **full-stack development skills** by integrating **Angular (Frontend), .NET Core (Backend), and MSSQL (Database)** to build a structured event management system. The system efficiently handles **quotes, events, sub-events, supervisors, laborers, and timesheets**.
 
 I developed this project within **two days** to reinforce my ability to **quickly architect and implement scalable solutions** using modern web technologies.
 
 ---
 
 ### 🛠️ Tech Stack  
-- **Frontend:** Angular 16, TypeScript, Bootstrap  
+- **Frontend:** Angular, TypeScript  
 - **Backend:** .NET Core 7 (Web API), Entity Framework Core  
 - **Database:** MSSQL (SQL Server)  
 - **Version Control:** Git, GitHub  
@@ -81,19 +81,6 @@ ng serve --open  # Runs the app on http://localhost:4200
 
 ---
 
-### 📩 Final Follow-up  
-This project reflects my **dedication, technical proficiency, and ability to execute efficiently**. Looking forward to the opportunity to discuss this further.  
-
-**📌 GitHub Repository:** [Your Repository Link]  
-
----
-
-### 📞 Contact  
+### 📞 Contact 
 **📧 Email:** rudram.vyas@gmail.com
 **💼 LinkedIn:** linkedin.com/in/rudram-vyas/  
-
-🚀 **Built with passion & expertise in 48 hours!**  
-
----
-
-This README will highlight your **technical skills, project execution speed, and ability to build real-world solutions**—perfect for impressing the interviewer in your **final follow-up email**. 🚀
