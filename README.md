@@ -84,17 +84,6 @@ ng serve --open  # Runs the app on http://localhost:4200
 
 ---
 
-## 🎯 What This Demonstrates  
-This project was **built in just two days** to showcase my ability to:  
-✅ Quickly architect & develop a **full-stack web application**  
-✅ Implement **role-based workflows** for real-world event management  
-✅ Handle **database design, API development, and frontend integration**  
-✅ Debug and optimize using **AI-powered assistance** for efficiency  
-
-I had planned to deploy the project live, but given the time constraints, I focused on delivering a **fully functional system** instead.  
-
----
-
 ## 📞 Contact  
 📧 **Email:** rudram.vyas@gmail.com  
 💼 **LinkedIn:** [linkedin.com/in/rudram-vyas](https://linkedin.com/in/rudram-vyas/)  
