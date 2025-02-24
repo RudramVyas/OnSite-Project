@@ -97,8 +97,8 @@ This project reflects my **dedication, technical proficiency, and ability to exe
 ---
 
 ### 📞 Contact  
-**📧 Email:** your.email@example.com  
-**💼 LinkedIn:** [Your LinkedIn Profile]  
+**📧 Email:** rudram.vyas@gmail.com
+**💼 LinkedIn:** linkedin.com/in/rudram-vyas/  
 
 🚀 **Built with passion & expertise in 48 hours!**  
 
