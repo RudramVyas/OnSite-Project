@@ -4,7 +4,7 @@
 
   <ul class="list">
     <li *ngFor="let subEvt of subEvents">
-      <span>{{ subEvt.name }} (Event ID: {{ subEvt.eventId }})</span>
+      <span>(Id: {{subEvt.subEventId}}): {{ subEvt.name }} - Event ID: {{ subEvt.eventId }}</span>
       <button (click)="deleteSubEvent(subEvt.subEventId)">Delete</button>
     </li>
   </ul>

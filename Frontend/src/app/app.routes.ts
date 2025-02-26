@@ -12,6 +12,7 @@ import { SupervisorL1Component } from './pages/supervisor-l1/supervisor-l1.compo
 import { TimesheetL2Component } from './pages/timesheet-l2/timesheet-l2.component';
 import { TimesheetL1Component } from './pages/timesheet-l1/timesheet-l1.component';
 import { TimesheetLaborerComponent } from './pages/timesheet-laborer/timesheet-laborer.component';
+import { assignmentsComponent } from './pages/assignment/assignment.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -27,6 +28,7 @@ export const routes: Routes = [
   { path: 'timesheets-l2', component: TimesheetL2Component },
   { path: 'timesheets-lab', component: TimesheetLaborerComponent },
   { path: 'timesheets', component: TimesheetsComponent },
+  { path: 'assignments', component: assignmentsComponent },
   // fall back route:
   { path: '', redirectTo: '/home', pathMatch: 'full' }
 ];

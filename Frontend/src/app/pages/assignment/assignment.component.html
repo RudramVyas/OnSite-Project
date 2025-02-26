@@ -1,0 +1,36 @@
+<div class="page-container">
+    <h2> Assignments </h2>
+    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+    <table class="assignmet-table">
+        <tr >
+            <th>Assignment Id</th>
+            <th>Event ID</th>
+            <th>Role</th>
+            <th>Laborer ID</th>
+            <th>Supervisor ID</th>
+            <th>Sub-Event ID</th>
+            <th class="actions">Actions</th>
+        </tr>
+        <!-- <tr *ngFor="let asign of assignments">
+            <td>{{ asign.assignmentId }}</td>
+            <td>{{ asign.eventId !== null ? asign.eventId : ' - ' }}</td>
+            <td>{{ asign.assignedRole !== null ? asign.assignedRole : ' - ' }}</td>
+            <td>{{ asign.laborerId !== null ? asign.laborerId : ' - ' }} </td>
+            <td>{{ asign.supervisorId !== null ? asign.supervisorId : ' - ' }} </td>
+            <td>{{ asign.subEventId !== null ? asign.subEventId : ' - ' }}</td>
+        </tr> -->
+      
+      <tr *ngFor="let asign of display">
+        <td>{{ asign.id }}</td>
+        <td>{{ asign.event !== null ? asign.event : ' - ' }}</td>
+        <td>{{ asign.role !== null ? asign.role : ' - ' }}</td>
+        <td>{{ asign.laborer !== null ? asign.laborer : ' - ' }} </td>
+        <td>{{ asign.supervisor !== null ? asign.supervisor : ' - ' }} </td>
+        <td>{{ asign.subEvent !== null ? asign.subEvent : ' - ' }}</td>
+        <td>
+            <button (click)="deleteAssignment(asign.id)">Delete</button>
+        </td>
+      </tr>
+    </table>
+</div>
