@@ -38,9 +38,15 @@ namespace OnSite.Backend.Controllers
         [HttpPost]
         public async Task<ActionResult<Assignment>> CreateAssignment([FromBody] Assignment assignment)
         {
-            // Business rules:
+            // Business rules:dot
             if (assignment.AssignedRole == "L2 Supervisor")
             {
+                // EventId must not be in Assignment
+                var l2SupervisorExists = await _context.Assignment
+                    .AnyAsync(a => a.EventId == assignment.EventId);
+                if (l2SupervisorExists)
+                    return BadRequest("L2 Supervisor already exists.");
+
                 // L2 must be assigned to an event (SubEventId must be null)
                 if (assignment.SubEventId != null)
                     return BadRequest("For L2 Supervisor assignments, SubEventId must be null.");
@@ -48,6 +54,10 @@ namespace OnSite.Backend.Controllers
             else if (assignment.AssignedRole == "L1 Supervisor")
             {
                 // L1 must be assigned to a sub-event (SubEventId required)
+                var subEventExists = await _context.Assignment
+                    .AnyAsync(a => a.SubEventId == assignment.SubEventId);
+                if (subEventExists)
+                    return BadRequest("Sub Event already assigned to someone.");
                 if (assignment.SubEventId == null || assignment.SubEventId <= 0)
                     return BadRequest("For L1 Supervisor assignments, SubEventId is required.");
             }

@@ -73,7 +73,7 @@ export class SupervisorL1Component implements OnInit {
         // Optionally, update the laborers list
         this.loadLaborers();
       },
-      error: err => this.errorMessage = 'Error assigning laborer'
+      error: err => this.errorMessage = err.message || 'Error assigning laborer'
     });
   }
   asignL1Supervisor(): void {
@@ -97,7 +97,7 @@ export class SupervisorL1Component implements OnInit {
         // Optionally, update the laborers list
         this.loadL1Supervisors();
       },
-      error: err => this.errorMessage = 'Error assigning L1 Supervisor'
+      error: err => this.errorMessage = err.error || 'Error assigning L1 Supervisor'
     });
   }
 }

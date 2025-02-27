@@ -5,8 +5,8 @@
     <table class="assignmet-table">
         <tr >
             <th>Assignment Id</th>
-            <th>Event ID</th>
             <th>Role</th>
+            <th>Event ID</th>
             <th>Laborer ID</th>
             <th>Supervisor ID</th>
             <th>Sub-Event ID</th>
@@ -23,8 +23,8 @@
       
       <tr *ngFor="let asign of display">
         <td>{{ asign.id }}</td>
-        <td>{{ asign.event !== null ? asign.event : ' - ' }}</td>
         <td>{{ asign.role !== null ? asign.role : ' - ' }}</td>
+        <td>{{ asign.event !== null ? asign.event : ' - ' }}</td>
         <td>{{ asign.laborer !== null ? asign.laborer : ' - ' }} </td>
         <td>{{ asign.supervisor !== null ? asign.supervisor : ' - ' }} </td>
         <td>{{ asign.subEvent !== null ? asign.subEvent : ' - ' }}</td>
