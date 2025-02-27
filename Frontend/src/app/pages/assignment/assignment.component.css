@@ -1,0 +1,73 @@
+.page-container {
+    background-color: var(--light-bg);
+    padding: 2rem;
+    margin: 2rem auto;
+    max-width: 80%;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+h2 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.assignmet-table{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.assignmet-table th{
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    padding: 0.5rem;
+    text-align: left;
+}
+
+tr{
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+}
+
+td,th{
+    display: flex;
+    width: 100%;
+    flex-grow: 1;
+    padding: 0.5rem;
+    padding-left: 1rem;
+}
+
+button{
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-left: auto;
+    margin-right: auto;
+}
+button:hover{
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.actions{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.error {
+    color: red;
+    margin-bottom: 1rem;
+  }
+  
+  .success {
+    color: green;
+    margin-bottom: 1rem;
+  }

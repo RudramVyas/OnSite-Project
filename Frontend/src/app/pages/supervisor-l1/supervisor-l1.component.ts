@@ -5,6 +5,7 @@ import { ApiService } from '../../services/api.service';
 import { Assignment } from '../../models/assignment';
 import { SubEvent } from '../../models/subEvent';
 import { Laborer } from '../../models/laborer';
+import { Supervisor } from '../../models/supervisor';
 
 @Component({
   selector: 'app-supervisor-l1',
@@ -16,17 +17,20 @@ import { Laborer } from '../../models/laborer';
 export class SupervisorL1Component implements OnInit {
   subEvents: SubEvent[] = [];
   laborers: Laborer[] = [];
+  l1Supervisors: Supervisor[] = [];
   errorMessage = '';
   successMessage = '';
 
   selectedSubEventId: number | null = null;
   selectedLaborerId: number | null = null;
+  selectedSupervisorId: number | null = null;
 
   constructor(private api: ApiService) {}
 
   ngOnInit(): void {
     this.loadSubEvents();
     this.loadLaborers();
+    this.loadL1Supervisors();
   }
 
   loadSubEvents(): void {
@@ -43,6 +47,12 @@ export class SupervisorL1Component implements OnInit {
     });
   }
 
+  loadL1Supervisors(): void {
+    this.api.getSupervisors().subscribe({
+      next: data => this.l1Supervisors = data.filter(supervisor => supervisor.level === 1),
+      error: err => this.errorMessage = 'Error loading L1 Supervisors'
+    });
+  }
   assignLaborer(): void {
     if (!this.selectedSubEventId || !this.selectedLaborerId) {
       this.errorMessage = 'Please select both a sub-event and a laborer.';
@@ -63,7 +73,31 @@ export class SupervisorL1Component implements OnInit {
         // Optionally, update the laborers list
         this.loadLaborers();
       },
-      error: err => this.errorMessage = 'Error assigning laborer'
+      error: err => this.errorMessage = err.message || 'Error assigning laborer'
+    });
+  }
+  asignL1Supervisor(): void {
+    // console.log('Assigning L1 Supervisor', this.selectedSubEventId, this.selectedSupervisorId);
+    if (!this.selectedSubEventId || !this.selectedSupervisorId) {
+      this.errorMessage = 'Please select both a sub-event and a supervisor.';
+      return;
+    }
+    const assignment: Assignment = {
+      assignmentId: 0,
+      eventId: null,
+      subEventId: this.selectedSubEventId,
+      supervisorId: this.selectedSupervisorId,
+      laborerId: null,
+      assignedRole: 'L1 Supervisor'
+    };
+    this.api.createAssignment(assignment).subscribe({
+      next: () => {
+        this.successMessage = 'L1 Supervisor assigned successfully!';
+        this.errorMessage = '';
+        // Optionally, update the laborers list
+        this.loadL1Supervisors();
+      },
+      error: err => this.errorMessage = err.error || 'Error assigning L1 Supervisor'
     });
   }
 }

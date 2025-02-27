@@ -1,5 +1,54 @@
+<!-- <div class="page-container">
+<ul>
+  <li *ngFor="let sup of l1Supervisors">
+    <div>
+      <strong>{{ sup.name }} (ID: {{sup.supervisorId}})</strong>
+    </div>
+  </li>
+</ul>
+</div> -->
 <div class="page-container">
-  <h2>Assign Laborer (L1 Supervisor)</h2>
+  <h2>Assign L1 Supervisor and Laborer</h2>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+
+  <div class="form-group">
+    <label for="subEventSelect">Select Sub-Event</label>
+    <select id="subEventSelect" [(ngModel)]="selectedSubEventId" name="subEventSelect" required>
+      <option [ngValue]="null">-- Select Sub-Event --</option>
+      <option *ngFor="let subEvt of subEvents" [ngValue]="subEvt.subEventId">
+        {{ subEvt.name }} (Event ID: {{ subEvt.eventId }})
+      </option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="supSelect">Select L1 Supervisor</label>
+    <select id="supSelect" [(ngModel)]="selectedSupervisorId" name="supSelect" required>
+      <option [ngValue]="null">-- Select L1 Supervisor --</option>
+      <option *ngFor="let sup of l1Supervisors" [ngValue]="sup.supervisorId">
+        {{ sup.name }}
+      </option>
+    </select>
+  </div>
+
+  <button (click)="asignL1Supervisor()">Assign Supervisor</button>
+
+  <div class="form-group">
+    <label for="laborerSelect">Select Laborer</label>
+    <select id="laborerSelect" [(ngModel)]="selectedLaborerId" name="laborerSelect" required>
+      <option [ngValue]="null">-- Select Laborer --</option>
+      <option *ngFor="let lab of laborers" [ngValue]="lab.laborerId">
+        {{ lab.name }}
+      </option>
+    </select>
+  </div>
+
+  <button (click)="assignLaborer()">Assign Laborer</button>
+</div>
+
+<!-- <div class="page-container">
+  <h2>Assign Laborer</h2>
   <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
   <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
 
@@ -24,4 +73,4 @@
   </div>
 
   <button (click)="assignLaborer()">Assign Laborer</button>
-</div>
+</div> -->
